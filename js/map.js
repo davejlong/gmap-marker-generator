@@ -1,15 +1,13 @@
 var map = '';
 
 // Infinitely runs a function at a slowing time interval
-function setDeceleratingTimeout( callback, factor, times ){
-  var internalCallback = function( t, counter ){
+function setPermTimeout( callback, factor ){
+  var internalCallback = function(){
     return function(){
-      //if ( --t > 0 ){
-        window.setTimeout( internalCallback, ++counter * factor );
+        window.setTimeout( internalCallback, factor );
         callback();
-      //}
     }
-  }( times, 0 );
+  }();
 
   window.setTimeout( internalCallback, factor );
 };
@@ -34,7 +32,7 @@ function initialize() {
 function addUser(position){
   map.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
   addMarker(position);
-  setDeceleratingTimeout(addMarker,1, 10);
+  setPermTimeout(addMarker,1000);
 
 }
 function addMarker(position){
@@ -43,6 +41,7 @@ function addMarker(position){
   } catch(err) {
     var latLng = new google.maps.LatLng(getRandomInRange(-180, 180, 3), getRandomInRange(-180, 180, 3));
   }
+  //map.panTo(latLng);
   var marker = new google.maps.Marker({
     position: latLng,
     map: map,
